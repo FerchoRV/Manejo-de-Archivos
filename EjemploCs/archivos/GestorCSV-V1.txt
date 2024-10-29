@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+public class GestorCSV
+{
+    private string rutaArchivo;
+
+    public GestorCSV(string ruta)
+    {
+        rutaArchivo = ruta;
+
+        // Crear el archivo si no existe
+        if (!File.Exists(rutaArchivo))
+        {
+            using (StreamWriter writer = new StreamWriter(rutaArchivo, true))
+            {
+                writer.WriteLine("Nombre,Apellido,Materia,Nota"); // Encabezados
+            }
+        }
+    }
+
+    // Agregar un nuevo estudiante al archivo
+    public void AgregarEstudiante(Estudiante estudiante)
+    {
+        using (StreamWriter writer = new StreamWriter(rutaArchivo, true))
+        {
+            writer.WriteLine(estudiante.ToString());
+        }
+    }
+
+    // Leer todos los estudiantes del archivo
+    public List<Estudiante> LeerEstudiantes()
+    {
+        List<Estudiante> estudiantes = new List<Estudiante>();
+        
+        using (StreamReader reader = new StreamReader(rutaArchivo))
+        {
+            reader.ReadLine(); // Omitir encabezado
+            string linea;
+            while ((linea = reader.ReadLine()) != null)
+            {
+                string[] campos = linea.Split(',');
+                Estudiante estudiante = new Estudiante(campos[0], campos[1], campos[2], double.Parse(campos[3]));
+                estudiantes.Add(estudiante);
+            }
+        }
+
+        return estudiantes;
+    }
+
+    // Mostrar estudiantes en consola
+    public void MostrarEstudiantes()
+    {
+        var estudiantes = LeerEstudiantes();
+        foreach (var estudiante in estudiantes)
+        {
+            Console.WriteLine($"{estudiante.Nombre} {estudiante.Apellido} - {estudiante.Materia}: {estudiante.Nota}");
+        }
+    }
+
+    // Editar la nota de un estudiante
+    public void EditarEstudiante(string nombre, string apellido, string materia, double nuevaNota)
+    {
+        var estudiantes = LeerEstudiantes();
+        bool encontrado = false;
+
+        // Buscar el estudiante y actualizar la nota
+        foreach (var estudiante in estudiantes)
+        {
+            if (estudiante.Nombre == nombre && estudiante.Apellido == apellido && estudiante.Materia == materia)
+            {
+                estudiante.Nota = nuevaNota;
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (encontrado)
+        {
+            // Reescribir el archivo con los datos actualizados
+            using (StreamWriter writer = new StreamWriter(rutaArchivo))
+            {
+                writer.WriteLine("Nombre,Apellido,Materia,Nota"); // Encabezados
+                foreach (var est in estudiantes)
+                {
+                    writer.WriteLine(est.ToString());
+                }
+            }
+
+            Console.WriteLine("Estudiante actualizado correctamente.");
+        }
+        else
+        {
+            Console.WriteLine("Estudiante no encontrado.");
+        }
+    }
+}

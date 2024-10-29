@@ -1,0 +1,68 @@
+﻿using System;
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        GestorCSV gestor = new GestorCSV("notas_estudiantes.csv");
+
+        bool ejecutar = true;
+
+        while (ejecutar)
+        {
+            Console.WriteLine("\n--- Sistema de Gestión de Notas ---");
+            Console.WriteLine("1. Agregar estudiante");
+            Console.WriteLine("2. Mostrar estudiantes");
+            Console.WriteLine("3. Editar nota de estudiante");
+            Console.WriteLine("4. Salir");
+            Console.Write("Seleccione una opción: ");
+            string opcion = Console.ReadLine();
+
+            switch (opcion)
+            {
+                case "1":
+                    Console.Write("Nombre: ");
+                    string nombre = Console.ReadLine();
+                    Console.Write("Apellido: ");
+                    string apellido = Console.ReadLine();
+                    Console.Write("Materia: ");
+                    string materia = Console.ReadLine();
+                    Console.Write("Nota: ");
+                    double nota = double.Parse(Console.ReadLine());
+
+                    Estudiante nuevoEstudiante = new Estudiante(nombre, apellido, materia, nota);
+                    gestor.AgregarEstudiante(nuevoEstudiante);
+                    Console.WriteLine("Estudiante agregado correctamente.");
+                    break;
+
+                case "2":
+                    Console.WriteLine("\n--- Lista de Estudiantes ---");
+                    gestor.MostrarEstudiantes();
+                    break;
+
+                case "3":
+                    Console.Write("Nombre del estudiante a editar: ");
+                    nombre = Console.ReadLine();
+                    Console.Write("Apellido: ");
+                    apellido = Console.ReadLine();
+                    Console.Write("Materia: ");
+                    materia = Console.ReadLine();
+                    Console.Write("Nueva Nota: ");
+                    double nuevaNota = double.Parse(Console.ReadLine());
+
+                    gestor.EditarEstudiante(nombre, apellido, materia, nuevaNota);
+                    break;
+
+                case "4":
+                    ejecutar = false;
+                    Console.WriteLine("Saliendo del sistema...");
+                    break;
+
+                default:
+                    Console.WriteLine("Opción inválida. Intente nuevamente.");
+                    break;
+            }
+        }
+    }
+}
+
